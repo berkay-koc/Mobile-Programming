@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     Button loginButton, signupButton;
     User user;
     Context context;
+    Receiver receiver = new Receiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
         loginButton = (Button) findViewById(R.id.login_button);
         signupButton = (Button) findViewById(R.id.signup_button);
         counter = 0;
+
+        IntentFilter filter = new IntentFilter("com.example.EXAMPLE_ACTION");
+        registerReceiver(receiver, filter);
     }
 
     public void login(View view) {
@@ -55,14 +61,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
     private boolean Authenticate(String email, String password){
         if(user.getEMail().equals(email) && user.getPassword().equals(password) ){
             return true;
         }
         return false;
     }
-
-
 
     public void signup(View view) {
         Intent activity2Intent = new Intent(getApplicationContext(), SignUpActivity.class);
